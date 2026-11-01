@@ -1,7 +1,9 @@
 {
   "name": "desarrollo_mobile",
   "version": "1.0.0",
+  "private": true,
   "main": "index.ts",
+  "packageManager": "yarn@4.18.1",
   "dependencies": {
     "expo": "~58.0.22",
     "expo-status-bar": "~58.0.4",
@@ -15,8 +17,6 @@
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
-  },
-  "private": true
+    "ios": "expo start --ios"
+  }
 }

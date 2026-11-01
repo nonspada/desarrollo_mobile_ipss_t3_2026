@@ -39,3 +39,9 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Yarn Berry
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
