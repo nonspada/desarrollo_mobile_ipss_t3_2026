@@ -46,4 +46,4 @@ yarn-error.*
 !.yarn/plugins
 .pnp.*
 
-docs/*.md
+docs/omp-workflow.md

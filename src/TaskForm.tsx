@@ -1,23 +1,49 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import type { Task } from './types';
+import { ActivityIndicator, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { captureLocation } from './location';
+import { capturePhoto } from './photos';
+import type { Task, TaskLocation } from './types';
 
 interface Props {
   editingTask: Task | null;
-  onSubmit: (title: string, description: string) => void;
+  ownerId: string;
+  onCreate: (title: string, description: string, photoUri: string | null, location: TaskLocation) => void;
+  onUpdate: (title: string, description: string) => void;
   onCancelEdit: () => void;
 }
 
-export default function TaskForm({ editingTask, onSubmit, onCancelEdit }: Props) {
+export default function TaskForm({ editingTask, ownerId, onCreate, onUpdate, onCancelEdit }: Props) {
   const [title, setTitle] = useState(editingTask?.title ?? '');
   const [description, setDescription] = useState(editingTask?.description ?? '');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [takingPhoto, setTakingPhoto] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const handleTakePhoto = async () => {
+    setTakingPhoto(true);
+    const uri = await capturePhoto(ownerId);
+    if (uri) setPhotoUri(uri);
+    setTakingPhoto(false);
+  };
+
+  const handleSubmit = async () => {
     const trimmedTitle = title.trim();
     if (!trimmedTitle) return;
-    onSubmit(trimmedTitle, description.trim());
+
+    if (editingTask) {
+      onUpdate(trimmedTitle, description.trim());
+      setTitle('');
+      setDescription('');
+      return;
+    }
+
+    setSubmitting(true);
+    const location = await captureLocation();
+    onCreate(trimmedTitle, description.trim(), photoUri, location);
+    setSubmitting(false);
     setTitle('');
     setDescription('');
+    setPhotoUri(null);
   };
 
   const handleCancel = () => {
@@ -25,6 +51,8 @@ export default function TaskForm({ editingTask, onSubmit, onCancelEdit }: Props)
     setDescription('');
     onCancelEdit();
   };
+
+  const busy = takingPhoto || submitting;
 
   return (
     <View style={styles.form}>
@@ -41,14 +69,40 @@ export default function TaskForm({ editingTask, onSubmit, onCancelEdit }: Props)
         onChangeText={setDescription}
         multiline
       />
+      {!editingTask && (
+        <View style={styles.photoRow}>
+          <TouchableOpacity
+            style={[styles.photoButton, takingPhoto && styles.buttonDisabled]}
+            onPress={handleTakePhoto}
+            disabled={busy}
+          >
+            {takingPhoto ? (
+              <ActivityIndicator color="#2563eb" />
+            ) : (
+              <Text style={styles.photoButtonText}>
+                {photoUri ? '📷 Cambiar foto' : '📷 Tomar foto'}
+              </Text>
+            )}
+          </TouchableOpacity>
+          {photoUri && <Image source={{ uri: photoUri }} style={styles.preview} />}
+        </View>
+      )}
       <View style={styles.actions}>
         {editingTask && (
           <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
             <Text style={styles.buttonText}>Cancelar</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>{editingTask ? 'Guardar cambios' : 'Agregar tarea'}</Text>
+        <TouchableOpacity
+          style={[styles.button, submitting && styles.buttonDisabled]}
+          onPress={handleSubmit}
+          disabled={busy}
+        >
+          {submitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>{editingTask ? 'Guardar cambios' : 'Agregar tarea'}</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -74,6 +128,28 @@ const styles = StyleSheet.create({
     minHeight: 60,
     textAlignVertical: 'top',
   },
+  photoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 8,
+  },
+  photoButton: {
+    borderWidth: 1,
+    borderColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  photoButtonText: {
+    color: '#2563eb',
+    fontWeight: '600',
+  },
+  preview: {
+    width: 40,
+    height: 40,
+    borderRadius: 6,
+  },
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -84,6 +160,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   cancelButton: {
     backgroundColor: '#9ca3af',

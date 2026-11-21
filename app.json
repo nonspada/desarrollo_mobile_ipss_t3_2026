@@ -7,7 +7,11 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Esta app usa la cámara para adjuntar fotos a tus tareas.",
+        "NSLocationWhenInUseUsageDescription": "Esta app usa tu ubicación para registrar dónde creaste cada tarea."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -16,8 +20,19 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
+    "plugins": [
+      [
+        "expo-image-picker",
+        { "cameraPermission": "Esta app usa la cámara para adjuntar fotos a tus tareas." }
+      ],
+      [
+        "expo-location",
+        { "locationWhenInUsePermission": "Esta app usa tu ubicación para registrar dónde creaste cada tarea." }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }

@@ -10,18 +10,33 @@ App móvil de lista de tareas (To-Do). Stack: **Expo (Expo Go) + React Native + 
 
 ## Estructura
 
-- `App.tsx` — pantalla única, estado de tareas (`useState`), sin navegación (no se usa Expo Router: una sola pantalla no lo justifica).
-- `src/types.ts`, `src/TaskForm.tsx`, `src/TaskItem.tsx` — componentes planos, sin carpetas anidadas innecesarias.
-- Estado en memoria. **No** agregar backend/API ni `AsyncStorage` a menos que se pida explícitamente (YAGNI).
+- `App.tsx` — pantalla principal (lista de tareas) condicionada a sesión activa; sin
+  navegación (no se usa Expo Router: 2 pantallas —login y lista— no lo justifican).
+- `src/types.ts` — tipos `User`, `Task`, `TaskLocation`.
+- `src/TaskForm.tsx`, `src/TaskItem.tsx`, `src/LoginScreen.tsx` — componentes planos, sin
+  carpetas anidadas innecesarias.
+- `src/auth.ts` — registro/login/logout/sesión (hash de contraseña con `expo-crypto`,
+  sesión activa en `expo-secure-store`).
+- `src/storage.ts` — persistencia de usuarios y tareas en `AsyncStorage`, namespaced por
+  `userId` (aislamiento estricto por usuario).
+- `src/photos.ts` — captura de foto (`expo-image-picker`) + copia persistente a
+  `documentDirectory` (`expo-file-system`).
+- `src/location.ts` — captura de GPS (`expo-location`) con validación de precisión y
+  manejo de permiso denegado/timeout, sin bloquear el alta de tareas.
+- `__tests__/` — tests de `auth`, `location`, `photos` con mocks de los módulos nativos
+  (ver detalle y justificación en `docs/3_STACK.md` y `docs/6_CIERRE.md`).
+- Persistencia real vía `AsyncStorage`/`expo-secure-store`/`expo-file-system`: la
+  excepción a "no agregar backend/API ni AsyncStorage" (YAGNI) quedó habilitada
+  explícitamente por los requerimientos de autenticación multiusuario y fotos/ubicación
+  persistentes — documentado en `docs/3_STACK.md`. Sigue sin haber backend remoto.
 
 ## Verificación obligatoria tras cambios
 
 ```bash
 yarn tsc --noEmit                              # typecheck
 yarn expo export --platform android --output-dir /tmp/check && rm -rf /tmp/check   # smoke bundle (Metro)
+yarn jest                                      # unit tests (auth, location, photos con mocks)
 ```
-
-No hay test runner configurado; no inventar uno salvo pedido explícito.
 
 ## Git
 
