@@ -45,3 +45,5 @@ yarn-error.*
 !.yarn/releases
 !.yarn/plugins
 .pnp.*
+
+docs/
