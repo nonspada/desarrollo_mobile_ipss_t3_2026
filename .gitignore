@@ -46,4 +46,4 @@ yarn-error.*
 !.yarn/plugins
 .pnp.*
 
-docs/
+docs/*.md

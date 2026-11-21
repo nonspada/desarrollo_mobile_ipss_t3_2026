@@ -47,8 +47,3 @@ yarn ios       # abre en simulador iOS (requiere macOS)
 ```bash
 yarn tsc --noEmit
 ```
-
-## Flujo de trabajo con OMP
-
-Instrucciones para retomar la sesión de desarrollo y guía de uso eficiente:
-[`docs/omp-workflow.md`](docs/omp-workflow.md).
