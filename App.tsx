@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Platform, SafeAreaView, StatusBar as RNStatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as auth from './src/auth';
 import LoginScreen from './src/LoginScreen';
@@ -7,6 +7,7 @@ import * as storage from './src/storage';
 import TaskForm from './src/TaskForm';
 import TaskItem from './src/TaskItem';
 import type { Task, TaskLocation, User } from './src/types';
+import { colors } from './src/theme';
 
 const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -17,13 +18,20 @@ export default function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   useEffect(() => {
-    auth.restoreSession().then(async (user) => {
-      if (user) {
-        setCurrentUser(user);
-        setTasks(await storage.getTasks(user.id));
+    (async () => {
+      try {
+        await auth.seedDefaultAdmin();
+        const user = await auth.restoreSession();
+        if (user) {
+          setCurrentUser(user);
+          setTasks(await storage.getTasks(user.id));
+        }
+      } catch (error) {
+        console.warn('No se pudo inicializar la sesión:', error);
+      } finally {
+        setRestoringSession(false);
       }
-      setRestoringSession(false);
-    });
+    })();
   }, []);
 
   const handleAuthenticated = async (user: User) => {
@@ -32,10 +40,15 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    await auth.logout();
-    setCurrentUser(null);
-    setTasks([]);
-    setEditingTask(null);
+    try {
+      await auth.logout();
+    } catch (error) {
+      console.warn('No se pudo borrar la sesión de forma segura, se cierra igual:', error);
+    } finally {
+      setCurrentUser(null);
+      setTasks([]);
+      setEditingTask(null);
+    }
   };
 
   const persistTasks = (userId: string, next: Task[]) => {
@@ -84,7 +97,7 @@ export default function App() {
   if (restoringSession) {
     return (
       <SafeAreaView style={styles.centered}>
-        <ActivityIndicator size="large" color="#2563eb" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
@@ -125,16 +138,20 @@ export default function App() {
   );
 }
 
+const androidStatusBarInset = Platform.OS === 'android' ? RNStatusBar.currentHeight ?? 24 : 0;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
+    paddingTop: androidStatusBarInset,
   },
   centered: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: androidStatusBarInset,
   },
   headerRow: {
     flexDirection: 'row',
@@ -146,10 +163,10 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#111827',
+    color: colors.primaryText,
   },
   logout: {
-    color: '#2563eb',
+    color: colors.coral,
     fontWeight: '600',
   },
   list: {
@@ -158,7 +175,7 @@ const styles = StyleSheet.create({
   empty: {
     textAlign: 'center',
     marginTop: 32,
-    color: '#6b7280',
+    color: colors.muted,
     fontSize: 15,
   },
 });

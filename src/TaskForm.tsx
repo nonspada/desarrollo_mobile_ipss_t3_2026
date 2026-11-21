@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { captureLocation } from './location';
+import { colors } from './theme';
 import { capturePhoto } from './photos';
 import type { Task, TaskLocation } from './types';
 
@@ -77,7 +78,7 @@ export default function TaskForm({ editingTask, ownerId, onCreate, onUpdate, onC
             disabled={busy}
           >
             {takingPhoto ? (
-              <ActivityIndicator color="#2563eb" />
+              <ActivityIndicator color={colors.primary} />
             ) : (
               <Text style={styles.photoButtonText}>
                 {photoUri ? '📷 Cambiar foto' : '📷 Tomar foto'}
@@ -99,7 +100,7 @@ export default function TaskForm({ editingTask, ownerId, onCreate, onUpdate, onC
           disabled={busy}
         >
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.buttonText}>{editingTask ? 'Guardar cambios' : 'Agregar tarea'}</Text>
           )}
@@ -113,16 +114,18 @@ const styles = StyleSheet.create({
   form: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: colors.border,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginBottom: 8,
     fontSize: 16,
+    backgroundColor: colors.surface,
+    color: colors.text,
   },
   multiline: {
     minHeight: 60,
@@ -136,13 +139,13 @@ const styles = StyleSheet.create({
   },
   photoButton: {
     borderWidth: 1,
-    borderColor: '#2563eb',
+    borderColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
   photoButtonText: {
-    color: '#2563eb',
+    color: colors.primary,
     fontWeight: '600',
   },
   preview: {
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   button: {
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.primary,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -167,10 +170,10 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   cancelButton: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: colors.muted,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.white,
     fontWeight: '600',
   },
 });

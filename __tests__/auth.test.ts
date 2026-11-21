@@ -68,6 +68,32 @@ describe('auth.login', () => {
   });
 });
 
+describe('auth.seedDefaultAdmin', () => {
+  it('crea la cuenta admin de ejemplo y permite loguearse con ella', async () => {
+    await auth.seedDefaultAdmin();
+
+    const user = await auth.login(auth.DEFAULT_ADMIN_USERNAME, auth.DEFAULT_ADMIN_PASSWORD);
+
+    expect(user.username).toBe(auth.DEFAULT_ADMIN_USERNAME);
+  });
+
+  it('es idempotente: no duplica la cuenta admin si ya existe', async () => {
+    await auth.seedDefaultAdmin();
+    await auth.seedDefaultAdmin();
+
+    const users = await storage.getUsers();
+    const admins = users.filter(
+      (candidate) => candidate.username.toLowerCase() === auth.DEFAULT_ADMIN_USERNAME
+    );
+    expect(admins).toHaveLength(1);
+  });
+
+  it('no inicia sesión automáticamente al sembrar la cuenta', async () => {
+    await auth.seedDefaultAdmin();
+    await expect(auth.restoreSession()).resolves.toBeNull();
+  });
+});
+
 describe('auth.restoreSession', () => {
   it('devuelve null si no hay sesión guardada', async () => {
     await expect(auth.restoreSession()).resolves.toBeNull();

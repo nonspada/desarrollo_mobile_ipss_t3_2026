@@ -14,22 +14,42 @@ function findByUsername(users: User[], username: string): User | undefined {
   return users.find((user) => user.username.toLowerCase() === needle);
 }
 
-export async function register(username: string, password: string): Promise<User> {
-  const users = await getUsers();
-  if (findByUsername(users, username)) {
-    throw new Error('USERNAME_TAKEN');
-  }
+/** Usuario de ejemplo preconfigurado: permite iniciar sesión sin registrarse antes. */
+export const DEFAULT_ADMIN_USERNAME = 'admin';
+export const DEFAULT_ADMIN_PASSWORD = 'admin123';
+
+async function createUser(username: string, password: string): Promise<User> {
   const salt = Crypto.randomUUID();
-  const user: User = {
+  return {
     id: Crypto.randomUUID(),
     username,
     passwordHash: await hashPassword(password, salt),
     passwordSalt: salt,
     createdAt: new Date().toISOString(),
   };
+}
+
+export async function register(username: string, password: string): Promise<User> {
+  const users = await getUsers();
+  if (findByUsername(users, username)) {
+    throw new Error('USERNAME_TAKEN');
+  }
+  const user = await createUser(username, password);
   await addUser(user);
   await SecureStore.setItemAsync(SESSION_KEY, user.id);
   return user;
+}
+
+/**
+ * Crea el usuario "admin" de ejemplo la primera vez que la app corre en el
+ * dispositivo. Idempotente (no duplica si ya existe) y no inicia sesión:
+ * solo deja la cuenta disponible para que cualquiera pueda loguearse con ella.
+ */
+export async function seedDefaultAdmin(): Promise<void> {
+  const users = await getUsers();
+  if (findByUsername(users, DEFAULT_ADMIN_USERNAME)) return;
+  const admin = await createUser(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD);
+  await addUser(admin);
 }
 
 export async function login(username: string, password: string): Promise<User> {

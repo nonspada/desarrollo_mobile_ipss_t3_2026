@@ -1,4 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors } from './theme';
 import type { Task, TaskLocationStatus } from './types';
 
 interface Props {
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     padding: 14,
     marginHorizontal: 16,
@@ -60,16 +61,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text,
   },
   description: {
     fontSize: 14,
-    color: '#4b5563',
+    color: colors.muted,
     marginTop: 4,
   },
   locationBadge: {
     fontSize: 12,
-    color: '#6b7280',
+    color: colors.muted,
     marginTop: 4,
   },
   actions: {
