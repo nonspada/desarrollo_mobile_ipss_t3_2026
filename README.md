@@ -137,6 +137,21 @@ Sin librería de navegación: solo dos pantallas (login y lista de tareas), resu
 | [`AGENTS.md`](AGENTS.md) | Instrucciones para agentes de código que evolucionan este proyecto |
 | [`.omp/AGENTS.md`](.omp/AGENTS.md) | Convenciones del proyecto (package manager, estructura, verificación, git) |
 
+## Demostración de la Aplicación
+
+| | |
+|---|---|
+| <img src="docs/screenshots/01-login.png" width="230" /> | <img src="docs/screenshots/02-login-input-datos.png" width="230" /> |
+| 01 — Login: pantalla de ingreso con la cuenta de ejemplo como recordatorio | 02 — Login: campos de usuario y contraseña completados |
+| <img src="docs/screenshots/03-estado-vacio.png" width="230" /> | <img src="docs/screenshots/04-tarea-registrada.png" width="230" /> |
+| 03 — Lista de tareas vacía tras iniciar sesión por primera vez | 04 — Tarea registrada visible en la lista |
+| <img src="docs/screenshots/05-permiso-gps.png" width="230" /> | <img src="docs/screenshots/06-registro-nueva-tarea.png" width="230" /> |
+| 05 — Solicitud de permiso de ubicación (GPS) al crear una tarea | 06 — Formulario de registro de una nueva tarea |
+| <img src="docs/screenshots/07-registro-nueva-tarea-con-foto.png" width="230" /> | <img src="docs/screenshots/08-captura-foto.png" width="230" /> |
+| 07 — Formulario de nueva tarea con foto ya adjunta | 08 — Cámara nativa capturando la foto de la tarea |
+| <img src="docs/screenshots/09-vista-previa-captura-foto.png" width="230" /> | <img src="docs/screenshots/10-tareas-registradas.png" width="230" /> |
+| 09 — Vista previa de la foto capturada antes de confirmar | 10 — Lista final con varias tareas registradas |
+
 ## Limitaciones
 
 - Sin backend remoto: desinstalar la app o perder el dispositivo borra usuarios, tareas y fotos. No hay sincronización entre dispositivos.
