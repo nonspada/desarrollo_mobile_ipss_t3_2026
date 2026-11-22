@@ -1,5 +1,11 @@
 # MyToDos
 
+| | |
+|---|---|
+| **Evaluación** | Sumativa n° 2 |
+| **Alumno** | Patricio Aliste Salas |
+| **Profesor** | Boris Belmar Muñoz |
+
 Lista de tareas (To-Do) móvil y multiusuario: cada tarea puede llevar una foto tomada con la cámara del dispositivo y la ubicación GPS capturada en el momento de crearla.
 
 > **Sin backend:** todos los datos viven en el dispositivo (`AsyncStorage` + `expo-secure-store`). Desinstalar la app borra usuarios, tareas y fotos; no hay sincronización entre dispositivos.
