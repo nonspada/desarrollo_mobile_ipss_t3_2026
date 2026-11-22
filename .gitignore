@@ -47,3 +47,6 @@ yarn-error.*
 .pnp.*
 
 docs/omp-workflow.md
+
+# Notas locales de traspaso para Claude Code (no es parte del entregable)
+.claude/
